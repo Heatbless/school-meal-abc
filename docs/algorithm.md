@@ -40,6 +40,8 @@ Sources with lower objective scores have higher fitness and greater selection pr
 
 A candidate replaces its source only when its score strictly improves. An accepted move resets that source's consecutive-failure counter. A failed improvement attempt increments it. The abandonment limit refers to attempts, rather than cycles.
 
+The discrete neighbor rule chooses a distinct partner source. It selects one position where the two schedules differ and copies the partner's component at that position. If there are no differing positions with alternatives, it picks a position that has at least two eligible components and substitutes a randomly chosen alternative. If every category has just one eligible component, the valid schedule stays unchanged and the attempt is counted as unsuccessful. These categorical choices replace the numerical perturbation used by continuous ABC.
+
 Best-ever memory is independent of the live sources, so a scout replacement cannot erase the best result.
 
 ## Stopping and reproducibility

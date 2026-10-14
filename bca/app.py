@@ -10,10 +10,12 @@ from fastapi.staticfiles import StaticFiles
 from .catalog import default_configuration
 from .meals import MealProblem
 from .models import EvaluateRequest
+from .runs import router as run_router
 
 STATIC = Path(__file__).parent / "static"
 app = FastAPI(title="BCA School Meal Scheduler", version="0.1.0")
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
+app.include_router(run_router)
 
 
 @app.get("/", include_in_schema=False)

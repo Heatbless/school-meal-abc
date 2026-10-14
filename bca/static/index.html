@@ -1,59 +1,17 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BCA · School meal scheduler</title>
-<style>
-body{font:16px system-ui,sans-serif;background:#faf8ef;color:#172c28;margin:0;padding:5vw}
-main{max-width:1000px;margin:auto}h1{font-size:clamp(2rem,5vw,3.5rem)}
-button,a{display:inline-block;padding:.8rem 1rem;border-radius:.5rem;background:#17644f;color:white;border:0;margin:.3rem;text-decoration:none}
-#menus{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
-article{background:white;padding:1rem;border:1px solid #dedccd;border-radius:1rem}#error{color:#a12828}
-</style>
-</head>
-<body>
+﻿<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BCA · School Meal Lab</title><link rel="stylesheet" href="/static/styles.css"><script type="module" src="/static/lab.js"></script></head><body>
+<header class="topbar"><a class="brand" href="/" aria-label="BCA School Meal Lab home"><span class="brand-mark">⬡</span><span>BCA <small>SCHOOL MEAL LAB</small></span></a><nav><span class="nav-current">Live colony</span><a href="/static/guide.html">Learn</a><a id="settings-link" href="/static/planner.html">Catalog & settings ↗</a></nav></header>
 <main>
-<p>ARTIFICIAL BEE COLONY · MBG DEMONSTRATION</p>
-<h1>Five days of school lunches</h1>
-<p>A Python host evaluates menus at school scale. Prices and nutrition values are editable demonstration data.</p>
-<a href="/static/planner.html">Catalog &amp; settings</a>
-<button id="evaluate" type="button">Evaluate demo schedule</button>
-<p id="error" role="alert"></p>
-<p id="summary" aria-live="polite">Loading demonstration catalog…</p>
-<div id="menus"></div>
-</main>
-<script type="module">
-let config;
-const summary=document.querySelector("#summary"), error=document.querySelector("#error"), menus=document.querySelector("#menus");
-const money=new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0});
-async function evaluate(){
-  error.textContent="";
-  try{
-    const schedule=config.days.flatMap((_,i)=>config.categories.map(category=>{
-      const options=config.catalog.filter(item=>item.category===category);
-      return options[category==="protein"?i%options.length:0].id;
-    }));
-    const response=await fetch("/api/evaluate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({catalog:config.catalog,planning:config.planning,schedule})});
-    const result=await response.json();
-    if(!response.ok)throw new Error(JSON.stringify(result.detail));
-    summary.textContent=`Score ${result.score.toFixed(3)} · ${result.totals.servings} servings · ${money.format(result.totals.cost)} · ${result.targets_met?"All targets met":"Targets remain unmet"}`;
-    menus.replaceChildren();
-    for(const day of result.days){
-      const card=document.createElement("article"), heading=document.createElement("h2"), text=document.createElement("p"), detail=document.createElement("p");
-      heading.textContent=day.day;
-      text.textContent=day.components.map(item=>item.name).join(" · ");
-      detail.textContent=`${day.servings} servings · ${day.nutrition.energy} kcal · ${day.nutrition.protein} g protein · ${money.format(day.cost)}`;
-      card.append(heading,text,detail);menus.append(card);
-    }
-  }catch(problem){error.textContent=problem.message;}
-}
-document.querySelector("#evaluate").addEventListener("click",evaluate);
-try{
- const response=await fetch("/api/bootstrap");
- if(!response.ok)throw new Error("Cannot load the Python host");
- config=await response.json();await evaluate();
-}catch(problem){error.textContent=problem.message;}
-</script>
-</body>
-</html>
+<section class="intro"><div><p class="eyebrow">FIVE DAYS. ONE SCHOOL. A COLONY OF POSSIBILITIES.</p><h1>Small choices.<br>A better school week.</h1><p class="intro-copy">Watch a real bee colony search for an MBG lunch schedule. Every source is a complete Monday–Friday menu. Every move is computed on your Python host.</p></div><aside class="scenario"><span class="dot"></span><strong>Demonstration data</strong><p id="scenario-summary">Loading your school settings…</p><a href="/static/planner.html">Adjust the school & meal catalog →</a></aside></section>
+<div id="error-message" class="notice error" role="alert" hidden></div><div id="info-message" class="notice" role="status" hidden></div>
+<section class="toolbar" aria-label="Run controls"><div class="playback"><button id="play-button" class="primary">▶ Play</button><button id="pause-button" disabled>Ⅱ Pause</button><button id="step-button">Step →</button><button id="stop-button" disabled>Stop</button><button id="reset-button">↺ Reset</button></div><label class="speed">Playback speed <input id="speed-control" type="range" min="1" max="5" value="3"><output id="speed-value">3×</output></label><p id="run-status" aria-live="polite">Ready to initialize</p></section>
+<section class="stats" aria-label="Run summary"><div><span>BEST SCORE <small>↓ LOWER IS BETTER</small></span><strong id="best-score">—</strong></div><div><span>CYCLE</span><strong id="cycle-count">0 <small>/ 100</small></strong></div><div><span>HOST EVALUATIONS</span><strong id="evaluation-count">0</strong></div><div><span>CURRENT PHASE</span><strong id="phase-label" class="phase-label">Initialization</strong></div></section>
+<div class="lab-grid"><section class="panel colony-panel"><div class="panel-heading"><div><p class="eyebrow">THE SEARCH, IN MOTION</p><h2>Inside the colony</h2></div><span id="phase-badge" class="badge">Ready</span></div><div class="role-legend"><span class="employed">● Employed / local search</span><span class="onlooker">● Onlooker / fitness selection</span><span class="scout">● Scout / fresh schedule</span></div>
+<svg id="hive-diagram" viewBox="0 0 800 390" role="img" aria-label="Schematic colony diagram showing the food source population"><defs><pattern id="honey-pattern" width="30" height="26" patternUnits="userSpaceOnUse"><path d="M0 6.5 15 0 30 6.5V19.5L15 26 0 19.5Z" fill="none" stroke="#dbc6a3" stroke-width=".7"/></pattern></defs><rect width="800" height="390" fill="url(#honey-pattern)" opacity=".2"/><g id="source-nodes"></g><g id="hive-center"><path d="M400 132 448 160V216L400 244 352 216V160Z" fill="#e9aa2a" stroke="#b87912" stroke-width="2"/><text x="400" y="185" text-anchor="middle" class="hive-title">THE HIVE</text><text x="400" y="207" text-anchor="middle" class="hive-subtitle">observe · select</text></g><path id="flight-path" fill="none" stroke-width="2" stroke-dasharray="5 7" opacity=".7"/><g id="moving-bee" hidden><ellipse cx="-5" cy="-7" rx="8" ry="5" fill="#fff" stroke="#635943"/><ellipse cx="7" cy="-7" rx="8" ry="5" fill="#fff" stroke="#635943"/><ellipse rx="12" ry="8" fill="#f1b632" stroke="#514735" stroke-width="1.5"/><path d="M-4-7V7M4-7V7" stroke="#514735" stroke-width="3"/><circle cx="11" cy="-1" r="3" fill="#514735"/></g></svg>
+<p class="diagram-caption">Schematic population view. Source positions are display labels; the variables are meal choices.</p><div id="event-callout" class="event-callout" aria-live="polite"><strong>A food source is a whole school week.</strong><p>Press Step to create the initial population, then follow one real decision at a time.</p></div></section>
+<section class="panel inspector"><div class="panel-heading"><div><p class="eyebrow">FOLLOW A DECISION</p><h2>Bee notebook</h2></div></div><div id="decision-details" class="empty-state">Accepted improvements replace a schedule. Failed attempts increase its abandonment counter.</div><div id="probability-panel" hidden><h3>Onlooker selection</h3><p class="muted">These probabilities were used for this draw, before the attempt changed the population.</p><p id="draw-value"></p><div id="probability-bars"></div></div></section></div>
+<section class="panel population"><div class="panel-heading"><div><p class="eyebrow">LIVE FOOD SOURCES</p><h2>A school week in every source</h2></div><p class="muted">Select a source to inspect its current menu</p></div><div id="source-roster" class="source-roster"><p class="muted">The colony will appear after initialization.</p></div><div id="selected-source" class="source-detail"></div></section>
+<div class="bottom-grid"><section class="panel"><div class="panel-heading"><div><p class="eyebrow">BEST EVER, RETAINED</p><h2>Learning over cycles</h2></div></div><svg id="convergence-chart" viewBox="0 0 640 210" role="img" aria-label="Best objective score over completed cycles"></svg><p class="muted">Best memory survives scout replacement. A lower score is better; reaching every target is reported separately.</p></section><section class="panel"><div class="panel-heading"><div><p class="eyebrow">HOST EVENT RECORD</p><h2>What just happened</h2></div><span id="event-count" class="badge">0 events</span></div><ol id="event-log" class="event-log"><li>Waiting for the first host event.</li></ol></section></div>
+<section class="panel result-panel"><div class="panel-heading"><div><p class="eyebrow">THE BEST SCHEDULE FOUND</p><h2>Five days, ready to review</h2></div><span id="target-status" class="badge">Awaiting search</span></div><div id="best-result"><p class="muted">Your best weekly menu, target status, and school totals will appear here as the search runs.</p></div></section>
+<details class="panel explanation"><summary>How this discrete bee algorithm works</summary><div class="explanation-grid"><div><h3>1 · Employed bees</h3><p>Each bee tries one meal component substitution in its own five-day schedule, guided by a distinct partner source. Only a strictly lower score is accepted.</p></div><div><h3>2 · Onlookers</h3><p>Fitness is 1 / (1 + score). A host-generated random draw selects a source with probability fitness / total fitness, then tries a substitution.</p></div><div><h3>3 · Scouts & memory</h3><p>After the failure limit, scouts replace a source with a fresh random schedule. Best-ever memory remains. Stop at the cycle limit, patience limit, or user request.</p></div></div><p>Score = weighted normalized cost + budget excess + nutrition deviations + repetition + workload excess. Nutrition is per serving; cost, ingredients, and batch workload scale to the school.</p><p>Costs, nutrition values, and targets are editable demonstration inputs. This is a discrete ABC teaching adaptation. A best observed schedule is not a guarantee of a global optimum.</p></details>
+</main><footer>BCA · Artificial Bee Colony, applied to everyday meal scheduling <span>Python host · local browser interface · no external assets</span></footer></body></html>
