@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BCA · School meal scheduler</title>
+<style>
+body{font:16px system-ui,sans-serif;background:#faf8ef;color:#172c28;margin:0;padding:5vw}
+main{max-width:1000px;margin:auto}h1{font-size:clamp(2rem,5vw,3.5rem)}
+button,a{display:inline-block;padding:.8rem 1rem;border-radius:.5rem;background:#17644f;color:white;border:0;margin:.3rem;text-decoration:none}
+#menus{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+article{background:white;padding:1rem;border:1px solid #dedccd;border-radius:1rem}#error{color:#a12828}
+</style>
+</head>
+<body>
+<main>
+<p>ARTIFICIAL BEE COLONY · MBG DEMONSTRATION</p>
+<h1>Five days of school lunches</h1>
+<p>A Python host evaluates menus at school scale. Prices and nutrition values are editable demonstration data.</p>
+<a href="/static/planner.html">Catalog &amp; settings</a>
+<button id="evaluate" type="button">Evaluate demo schedule</button>
+<p id="error" role="alert"></p>
+<p id="summary" aria-live="polite">Loading demonstration catalog…</p>
+<div id="menus"></div>
+</main>
+<script type="module">
+let config;
+const summary=document.querySelector("#summary"), error=document.querySelector("#error"), menus=document.querySelector("#menus");
+const money=new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0});
+async function evaluate(){
+  error.textContent="";
+  try{
+    const schedule=config.days.flatMap((_,i)=>config.categories.map(category=>{
+      const options=config.catalog.filter(item=>item.category===category);
+      return options[category==="protein"?i%options.length:0].id;
+    }));
+    const response=await fetch("/api/evaluate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({catalog:config.catalog,planning:config.planning,schedule})});
+    const result=await response.json();
+    if(!response.ok)throw new Error(JSON.stringify(result.detail));
+    summary.textContent=`Score ${result.score.toFixed(3)} · ${result.totals.servings} servings · ${money.format(result.totals.cost)} · ${result.targets_met?"All targets met":"Targets remain unmet"}`;
+    menus.replaceChildren();
+    for(const day of result.days){
+      const card=document.createElement("article"), heading=document.createElement("h2"), text=document.createElement("p"), detail=document.createElement("p");
+      heading.textContent=day.day;
+      text.textContent=day.components.map(item=>item.name).join(" · ");
+      detail.textContent=`${day.servings} servings · ${day.nutrition.energy} kcal · ${day.nutrition.protein} g protein · ${money.format(day.cost)}`;
+      card.append(heading,text,detail);menus.append(card);
+    }
+  }catch(problem){error.textContent=problem.message;}
+}
+document.querySelector("#evaluate").addEventListener("click",evaluate);
+try{
+ const response=await fetch("/api/bootstrap");
+ if(!response.ok)throw new Error("Cannot load the Python host");
+ config=await response.json();await evaluate();
+}catch(problem){error.textContent=problem.message;}
+</script>
+</body>
+</html>
