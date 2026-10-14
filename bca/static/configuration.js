@@ -70,7 +70,8 @@ export function validateConfiguration(value) {
   const a = configuration.algorithm;
   object(a, ["sources", "onlookers", "limit", "max_cycles", "patience", "seed"], "Algorithm");
   for (const [key, min, max] of [["sources", 2, 80], ["onlookers", 1, 160], ["limit", 1, 10000], ["max_cycles", 1, 2000], ["patience", 0, 2000], ["seed", Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]]) numeric(a[key], key, min, max, true);
-  const missing = CATEGORIES.filter(category => !configuration.catalog.some(item => item.category === category && !item.tags.some(tag => p.exclusions.includes(tag.trim()))));
+  const exclusions = p.exclusions.map(tag => tag.trim());
+  const missing = CATEGORIES.filter(category => !configuration.catalog.some(item => item.category === category && !item.tags.some(tag => exclusions.includes(tag.trim()))));
   if (missing.length) throw new Error(`No eligible components for: ${missing.join(", ")}. Add an option or adjust dietary exclusions.`);
   const clean = clone(configuration);
   for (const item of clean.catalog) {

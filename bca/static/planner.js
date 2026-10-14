@@ -157,7 +157,8 @@ $("#import-configuration").addEventListener("change", event => action(async () =
     let parsed; try { parsed = JSON.parse(await file.text()); } catch { throw new Error("This file is not valid JSON. Import an exported BCA configuration or results JSON."); }
     const imported = validateConfiguration(parsed.configuration || parsed);
     // Validation stays on the host before replacing the current draft.
-    const probe = DAYS.flatMap((_, day) => CATEGORIES.map(category => imported.catalog.filter(item => item.category === category && !item.tags.some(tag => imported.planning.exclusions.includes(tag)))[day % imported.catalog.filter(item => item.category === category && !item.tags.some(tag => imported.planning.exclusions.includes(tag))).length].id));
+    const options = Object.fromEntries(CATEGORIES.map(category => [category, imported.catalog.filter(item => item.category === category && !item.tags.some(tag => imported.planning.exclusions.includes(tag)))]));
+    const probe = DAYS.flatMap((_, day) => CATEGORIES.map(category => options[category][day % options[category].length].id));
     await api("/api/evaluate", {method: "POST", body: {catalog: imported.catalog, planning: imported.planning, schedule: probe}});
     configuration = imported; renderAll(); changed(); message("#notice", "Configuration imported. Review it and save to use it in the bee lab.");
   } finally { event.target.value = ""; }
