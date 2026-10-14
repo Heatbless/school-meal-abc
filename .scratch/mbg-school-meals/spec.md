@@ -1,5 +1,5 @@
 # MBG School Meal Scheduler
-Status: ready-for-agent
+Status: implemented and verified
 
 ## Problem Statement
 An educational BCA application needs a complete everyday-life optimization example and a faithful animation of its actual decisions. The confirmed example is a five-day MBG school lunch schedule at school-scale quantities. See design.md for the complete confirmed domain requirements and proposed editable defaults.

@@ -4,7 +4,7 @@
 
 **Blocked by:** 01
 
-**Status:** complete
+**Status:** resolved
 
 - [x] Actual discrete ABC phases and documented source-guided substitutions
 - [x] Correct fitness selection, greedy counters, scouts and independent best memory
@@ -17,3 +17,5 @@
 Evidence: approved colony/HTTP seams cover replay, actual pre-draw probabilities, greedy counters, scout memory, patience, independently enumerated tiny optimum, thread-safe advancement and bounded storage. Installed Chrome validation exercised initialization, employed/onlooker/scout events, SVG bee visibility, play, completion, reset and a 390px phone viewport without page errors or horizontal overflow. Reads do not advance the colony; the browser never optimizes or evaluates meal scores.
 
 See ../spec.md, ../design.md and ../contract.md for the full agreed requirements.
+
+Final integration verification: 39 tests pass, Ruff passes, Chrome workflows pass, and independent Standards and Spec reviews report zero findings. See ../review.md.

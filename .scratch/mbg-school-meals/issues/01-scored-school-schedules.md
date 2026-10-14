@@ -4,7 +4,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** complete
+**Status:** resolved
 
 - [x] Bootstrap/evaluate HTTP contracts and public MealProblem interface work
 - [x] Validated catalog/settings and category eligibility errors
@@ -22,3 +22,5 @@ See ../spec.md, ../design.md and ../contract.md for the full agreed requirements
 - Bootstrap includes 19 editable demonstration components; a five-day 500-serving schedule with five distinct proteins meets all original default targets.
 - uv run ruff check . passes; uv run main.py --help verifies host/port entry point.
 - Positive normalization targets are bounded to 0.001..10,000,000 to keep all scores finite. Other numeric values are nonnegative finite values up to 10,000,000; servings and batch size are positive integers up to 1,000,000.
+
+Final integration verification: 39 tests pass, Ruff passes, Chrome workflows pass, and independent Standards and Spec reviews report zero findings. See ../review.md.

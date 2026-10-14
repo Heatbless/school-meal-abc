@@ -4,13 +4,15 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Planner edits every configuration field and catalog field with add/remove/import/export
-- [ ] Host evaluation validation errors displayed clearly
-- [ ] Shared saved configuration consumed by live lab
-- [ ] Detailed menus, quantities, per-serving nutrition, batches, violations and procurement render safely
-- [ ] JSON/CSV result exports include reproducibility settings and ingredient units
-- [ ] Narrow-screen usable forms and meaningful export checks
+- [x] Planner edits every configuration field and catalog field with add/remove/import/export
+- [x] Host evaluation validation errors displayed clearly
+- [x] Shared saved configuration consumed by live lab
+- [x] Detailed menus, quantities, per-serving nutrition, batches, violations and procurement render safely
+- [x] JSON/CSV result exports include reproducibility settings and ingredient units
+- [x] Narrow-screen usable forms and meaningful export checks
 
 See ../spec.md, ../design.md and ../contract.md for the full agreed requirements.
+
+Final integration verification: 39 tests pass, Ruff passes, Chrome workflows pass, and independent Standards and Spec reviews report zero findings. See ../review.md.
