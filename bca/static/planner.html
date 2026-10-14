@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f4eb">
+  <title>Plan & catalog · BCA School Meals</title>
+  <link rel="stylesheet" href="/static/editor.css">
+  <script type="module" src="/static/planner.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BCA school meals home"><span class="brand-mark" aria-hidden="true">⬡</span> BCA <span>School meals</span></a>
+    <nav aria-label="Main navigation"><a href="/">Bee lab</a><a href="/static/planner.html" aria-current="page">Plan & catalog</a></nav>
+  </header>
+  <main>
+    <div class="page-intro"><p class="eyebrow">FIVE DAYS · ONE SCHOOL · MANY POSSIBILITIES</p><h1>Make the plan<br><span>your own.</span></h1><p>Set your school's quantities, shape the menu catalog, and choose what the colony should prioritize.</p></div>
+    <aside class="demo-note"><strong>A working MBG demonstration</strong><p>One complete lunch per student, Monday–Friday. All prices, nutrition values and targets are editable examples. The Python host performs every evaluation and search.</p></aside>
+    <div id="notice" role="status" class="notice" hidden></div>
+    <div id="error" role="alert" class="error" hidden tabindex="-1"></div>
+    <div class="config-toolbar">
+      <button id="save-configuration" type="button" class="primary" disabled>Save & use in bee lab</button>
+      <button id="export-configuration" type="button" disabled>Download configuration</button>
+      <label class="file-button" for="import-configuration">Import JSON<input id="import-configuration" type="file" accept=".json,application/json"></label>
+      <button id="reset-configuration" type="button" class="quiet" disabled>Restore demo defaults</button>
+      <span id="save-status" role="status">Loading Python host…</span>
+    </div>
+    <form id="configuration-form" novalidate>
+      <section class="panel" aria-labelledby="planning-heading"><div class="section-heading"><span class="section-number">01</span><div><p class="eyebrow">SCHOOL & TARGETS</p><h2 id="planning-heading">A week at your school</h2></div></div><p class="section-copy">Serving counts scale cost, ingredients and batch workload. Nutrition stays per serving.</p><div id="serving-fields" class="serving-grid"></div><div id="planning-fields" class="field-grid"></div><div id="dietary-field"></div></section>
+      <section class="panel" aria-labelledby="weights-heading"><div class="section-heading"><span class="section-number">02</span><div><p class="eyebrow">TRANSPARENT SCORING</p><h2 id="weights-heading">What matters most?</h2></div></div><p class="section-copy">The host minimizes the sum of weighted, normalized terms. A zero weight removes a penalty from the score; its unmet target remains visible.</p><div id="weight-fields" class="field-grid"></div></section>
+      <section class="panel" aria-labelledby="algorithm-heading"><div class="section-heading"><span class="section-number">03</span><div><p class="eyebrow">COLONY CONTROLS</p><h2 id="algorithm-heading">Set up the search</h2></div></div><p class="section-copy">Each source is a full five-day schedule. A fixed seed reproduces the same decisions for the same inputs.</p><div id="algorithm-fields" class="field-grid"></div></section>
+      <section class="panel" aria-labelledby="catalog-heading"><div class="section-heading"><span class="section-number">04</span><div><p class="eyebrow">EDITABLE MEAL COMPONENTS</p><h2 id="catalog-heading">The menu catalog</h2></div></div><p class="section-copy">Every menu combines one staple, protein dish, vegetable dish and fruit. Costs, nutrition and ingredients describe one serving. Work is measured per batch.</p><div class="catalog-controls"><label for="catalog-search">Search catalog<input id="catalog-search" type="search" placeholder="Find a component…"></label><label for="catalog-category">Category<select id="catalog-category"><option value="">All categories</option><option value="staple">Staple</option><option value="protein">Protein dish</option><option value="vegetable">Vegetable dish</option><option value="fruit">Fruit</option></select></label><button id="add-component" type="button">+ Add component</button></div><p id="catalog-count" class="muted"></p><div id="catalog-list"></div></section>
+    </form>
+    <section class="panel" aria-labelledby="preview-heading"><div class="section-heading"><span class="section-number">05</span><div><p class="eyebrow">CHECK A SCHEDULE</p><h2 id="preview-heading">Try your menu choices</h2></div></div><p class="section-copy">Choose a complete week and ask the Python host to score it. This manual preview helps explain the inputs; the bee lab searches for better schedules.</p><div id="schedule-fields" class="schedule-grid"></div><div class="preview-actions"><button id="evaluate-preview" type="button" class="primary" disabled>Evaluate on Python host</button><button id="fill-schedule" type="button" disabled>Fill example week</button><a href="/" class="text-link">Open the bee lab →</a></div><div id="preview-results" aria-live="polite"></div></section>
+    <footer>School meal planning through a discrete Artificial Bee Colony search. <a href="/">Back to the bee lab →</a></footer>
+  </main>
+</body>
+</html>
