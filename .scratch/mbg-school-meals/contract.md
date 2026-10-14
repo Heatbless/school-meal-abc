@@ -40,7 +40,7 @@ Ticket 01 owns initial package, models, scoring, data, server bootstrap/evaluate
 Ticket 02 owns optimizer, live run routes, main lab interface and shared base stylesheet. It must not edit planner.html, planner.js, editor.css, results.js or configuration.js (owned by 03).
 Ticket 03 owns configuration.js, planner.html, planner.js, editor.css, results.js and export tests. Avoid app.py edits; host serves static assets under /static and planner.html can be linked directly there.
 configuration.js exports loadConfiguration() async (bootstrap fallback plus local storage), saveConfiguration(configuration), resetConfiguration(), and api(path, options={}) with JSON errors.
-Local storage key: bca.configuration.v1. Stored value {catalog,planning,algorithm}. Lab and planner share this contract.
+Local storage key: abc.configuration.v1. Stored value {catalog,planning,algorithm}. Lab and planner share this contract. Existing bca.configuration.v1 data is migrated on first load.
 results.js exports renderResults(container, best, configuration) and exportResults(best, configuration, format); it can be imported by the lab after integration. Support JSON and CSV downloads without recalculating optimization in JavaScript.
 Ticket 02 initially reads the configuration key directly and renders a basic best schedule; 04 wires shared modules and richer results.
 Main index route /; planner link /static/planner.html. Settings link must be present. All UI text must be safely rendered as text, not interpolated untrusted HTML.

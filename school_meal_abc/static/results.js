@@ -15,10 +15,10 @@ function download(descriptor) {
 
 export function exportResults(best, configuration, format = "json") {
   if (!best?.evaluation) throw new Error("Evaluate a schedule or run the colony before exporting results.");
-  if (format === "csv") return download({filename: "bca-school-meals.csv", mime: "text/csv;charset=utf-8", content: resultCSV(best, configuration)});
+  if (format === "csv") return download({filename: "abc-school-meals.csv", mime: "text/csv;charset=utf-8", content: resultCSV(best, configuration)});
   if (format !== "json") throw new Error("Unknown export format.");
   return download({
-    filename: "bca-school-meals.json", mime: "application/json;charset=utf-8",
+    filename: "abc-school-meals.json", mime: "application/json;charset=utf-8",
     content: JSON.stringify({schema_version: 1, exported_at: new Date().toISOString(), configuration, best}, null, 2),
   });
 }

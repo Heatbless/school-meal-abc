@@ -1,10 +1,10 @@
-# BCA: Five-day MBG School Meal Scheduler
+# ABC: Five-day MBG School Meal Scheduler
 
 Status: confirmed by user; implementation authorized with uv and Python 3.11
 
 ## Purpose
 
-Build a complete, modular Python application that demonstrates a discrete Artificial Bee Colony (ABC) algorithm through five-day MBG school meal scheduling. BCA remains the project name. The everyday example involves meal choices and scheduling. TSP and placement optimization are excluded by the user's requirements.
+Build a complete, modular Python application that demonstrates a discrete Artificial Bee Colony (ABC) algorithm through five-day MBG school meal scheduling. ABC is the project name. The everyday example involves meal choices and scheduling. TSP and placement optimization are excluded by the user's requirements.
 
 The application combines an understandable school-scale planning result with an animation driven by the optimizer's real decisions. Sample prices, nutrition values, and targets are labeled demonstration inputs; users can edit them.
 

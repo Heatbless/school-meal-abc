@@ -1,6 +1,6 @@
 # How the Bee Search Works
 
-This app demonstrates a **discrete Artificial Bee Colony (ABC)** adaptation. The project is named BCA. A candidate solution is a complete school lunch schedule for Monday through Friday. Every day contains a staple, protein dish, vegetable dish, and fruit, so a schedule contains 20 categorical choices.
+This app demonstrates a **discrete Artificial Bee Colony (ABC)** adaptation. A candidate solution is a complete school lunch schedule for Monday through Friday. Every day contains a staple, protein dish, vegetable dish, and fruit, so a schedule contains 20 categorical choices.
 
 ## From bees to meal schedules
 

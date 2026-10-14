@@ -1,6 +1,7 @@
 export const CATEGORIES = ["staple", "protein", "vegetable", "fruit"];
 export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-const STORAGE_KEY = "bca.configuration.v1";
+const STORAGE_KEY = "abc.configuration.v1";
+const LEGACY_STORAGE_KEY = "bca.configuration.v1";
 let temporary = null;
 let notice = "";
 const clone = value => JSON.parse(JSON.stringify(value));
@@ -93,9 +94,18 @@ export async function loadConfiguration() {
   notice = "";
   if (temporary) return {...clone(temporary), categories: CATEGORIES, days: DAYS};
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const current = localStorage.getItem(STORAGE_KEY);
+    const legacy = current ? null : localStorage.getItem(LEGACY_STORAGE_KEY);
+    const stored = current ?? legacy;
     if (stored) {
-      try { return {...validateConfiguration(JSON.parse(stored)), categories: CATEGORIES, days: DAYS}; }
+      try {
+        const validated = validateConfiguration(JSON.parse(stored));
+        if (legacy) {
+          try { localStorage.setItem(STORAGE_KEY, legacy); localStorage.removeItem(LEGACY_STORAGE_KEY); }
+          catch { notice = "Settings were migrated in memory; browser storage could not update the saved key."; }
+        }
+        return {...validated, categories: CATEGORIES, days: DAYS};
+      }
       catch { notice = "Saved settings were unreadable or invalid. The demonstration defaults have been loaded; you can import a valid configuration."; }
     }
   } catch { notice = "Browser storage is unavailable. Settings can be used in this page and downloaded as JSON."; }
@@ -111,7 +121,7 @@ export function saveConfiguration(configuration) {
 
 export async function resetConfiguration() {
   temporary = null;
-  try { localStorage.removeItem(STORAGE_KEY); } catch { /* The host defaults remain usable. */ }
+  try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(LEGACY_STORAGE_KEY); } catch { /* The host defaults remain usable. */ }
   const defaults = await api("/api/bootstrap");
   return {...validateConfiguration(defaults), categories: CATEGORIES, days: DAYS};
 }

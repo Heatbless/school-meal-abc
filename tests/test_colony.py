@@ -2,9 +2,9 @@ from itertools import product
 
 import pytest
 
-from bca.catalog import default_configuration
-from bca.meals import MealProblem
-from bca.optimizer import BeeColony
+from school_meal_abc.catalog import default_configuration
+from school_meal_abc.meals import MealProblem
+from school_meal_abc.optimizer import BeeColony
 
 
 def colony(**overrides):

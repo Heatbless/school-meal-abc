@@ -148,13 +148,13 @@ $("#evaluate-preview").addEventListener("click", () => action(async () => {
 $("#fill-schedule").addEventListener("click", () => { renderSchedule(true); best = null; $("#preview-results").replaceChildren(); clearError(); });
 $("#export-configuration").addEventListener("click", () => action(async () => {
   const validated = readConfiguration(), url = URL.createObjectURL(new Blob([JSON.stringify(validated, null, 2)], {type: "application/json;charset=utf-8"}));
-  const link = node("a"); link.href = url; link.download = "bca-configuration.json"; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const link = node("a"); link.href = url; link.download = "abc-configuration.json"; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }));
 $("#import-configuration").addEventListener("change", event => action(async () => {
   const file = event.target.files[0]; if (!file) return;
   try {
     if (file.size > 20000000) throw new Error("Configuration file is too large (maximum 20 MB).");
-    let parsed; try { parsed = JSON.parse(await file.text()); } catch { throw new Error("This file is not valid JSON. Import an exported BCA configuration or results JSON."); }
+    let parsed; try { parsed = JSON.parse(await file.text()); } catch { throw new Error("This file is not valid JSON. Import an exported ABC configuration or results JSON."); }
     const imported = validateConfiguration(parsed.configuration || parsed);
     // Validation stays on the host before replacing the current draft.
     const options = Object.fromEntries(CATEGORIES.map(category => [category, imported.catalog.filter(item => item.category === category && !item.tags.some(tag => imported.planning.exclusions.includes(tag)))]));

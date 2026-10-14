@@ -1,8 +1,34 @@
-# BCA · MBG Meal Laboratory
+# ABC · MBG Meal Laboratory
 
 An interactive school meal scheduler that makes the Artificial Bee Colony search visible. Plan one complete lunch for each school day, Monday-Friday, and watch employed bees, onlookers, and scouts improve candidate schedules.
 
 All optimization and scoring run on the Python host. The browser displays events and sends controls, so phones and other computers can use the host over the same network.
+
+## Install with pip
+
+Python 3.11 or newer is required. Create a virtual environment, install the app dependencies, and start the host:
+
+**Windows PowerShell**
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python main.py
+```
+
+**macOS / Linux**
+
+```sh
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python main.py
+```
+
+Open **http://127.0.0.1:8000**. To allow other devices on your local network, start with `python main.py --host 0.0.0.0 --port 8000` and open `http://<HOST-IP>:8000` from those devices. Keep the Python host running while using the app.
+
+To run development checks, install `requirements-dev.txt` in the activated environment. Then use `python -m pytest` and `ruff check .`.
 
 ## Run with uv
 

@@ -112,7 +112,7 @@ def main():
         page.wait_for_function(
             "document.querySelector('#error').textContent.includes('No eligible components for: protein')"
         )
-        page.evaluate("localStorage.setItem('bca.configuration.v1', '{bad')")
+        page.evaluate("localStorage.setItem('abc.configuration.v1', '{bad')")
         page.reload()
         page.wait_for_function(
             "document.querySelector('#notice').textContent.includes('unreadable')"

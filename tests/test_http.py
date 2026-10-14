@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 
-from bca.app import app
-from bca.catalog import default_configuration
-from bca.meals import MealProblem
+from school_meal_abc.app import app
+from school_meal_abc.catalog import default_configuration
+from school_meal_abc.meals import MealProblem
 
 client = TestClient(app)
 

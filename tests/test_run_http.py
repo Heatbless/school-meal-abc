@@ -2,8 +2,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from fastapi.testclient import TestClient
 
-from bca.app import app
-from bca.catalog import default_configuration
+from school_meal_abc.app import app
+from school_meal_abc.catalog import default_configuration
 
 
 def test_runs_are_isolated_and_reading_does_not_advance():

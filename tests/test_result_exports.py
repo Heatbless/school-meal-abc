@@ -11,7 +11,7 @@ import pytest
 from fastapi.testclient import TestClient
 from test_meals import fixture
 
-from bca.app import app
+from school_meal_abc.app import app
 
 
 def exported(format):
@@ -41,7 +41,7 @@ process.stdout.write(JSON.stringify(exportResults(input.best, input.configuratio
         [node, "--input-type=module", "-e", script],
         input=json.dumps(
             {
-                "module": str(Path(__file__).parents[1] / "bca/static/results.js"),
+                "module": str(Path(__file__).parents[1] / "school_meal_abc/static/results.js"),
                 "best": {"schedule": schedule, "evaluation": evaluation},
                 "configuration": configuration,
                 "format": format,

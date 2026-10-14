@@ -2,7 +2,7 @@ import random
 
 import pytest
 
-from bca.meals import MealProblem
+from school_meal_abc.meals import MealProblem
 
 
 def fixture():
@@ -218,7 +218,7 @@ def test_nutrition_measures_excess_energy_and_independent_shortfalls_per_serving
 
 
 def test_demonstration_catalog_exposes_tradeoffs_and_keeps_a_feasible_week():
-    from bca.catalog import default_configuration
+    from school_meal_abc.catalog import default_configuration
 
     config = default_configuration()
     problem = MealProblem(config["catalog"], config["planning"])

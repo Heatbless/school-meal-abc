@@ -1,5 +1,5 @@
 [project]
-name = "bca"
+name = "school-meal-abc"
 version = "0.1.0"
 description = "Animated bee colony optimization for school meal scheduling"
 readme = "README.md"

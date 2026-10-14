@@ -230,7 +230,7 @@ def main():
         ready(page, "#step-button")
         assert context.request.get(args.url + "/api/runs/" + previous_id).status == 404
         # Bad saved data falls back with a visible explanation.
-        page.evaluate("localStorage.setItem('bca.configuration.v1', '{bad')")
+        page.evaluate("localStorage.setItem('abc.configuration.v1', '{bad')")
         page.reload()
         ready(page, "#step-button")
         assert "unreadable" in page.locator("#info-message").inner_text()

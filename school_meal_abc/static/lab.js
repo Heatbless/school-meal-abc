@@ -29,12 +29,18 @@ function notice(id, text) { $(id).textContent = text; $(id).hidden = !text; }
 function fail(error) { pause(); notice('error-message', error.message); }
 
 function rememberRun(id) {
-  try { id ? sessionStorage.setItem('bca.tab.run', id) : sessionStorage.removeItem('bca.tab.run'); }
+  try {
+    if (id) { sessionStorage.setItem('abc.tab.run', id); sessionStorage.removeItem('bca.tab.run'); }
+    else { sessionStorage.removeItem('abc.tab.run'); sessionStorage.removeItem('bca.tab.run'); }
+  }
   catch { /* Reset still cleans the current run if browser storage is unavailable. */ }
 }
 async function retirePreviousRun() {
   let previous;
-  try { previous = sessionStorage.getItem('bca.tab.run'); } catch { return; }
+  try {
+    previous = sessionStorage.getItem('abc.tab.run') || sessionStorage.getItem('bca.tab.run');
+    if (previous) sessionStorage.setItem('abc.tab.run', previous);
+  } catch { return; }
   if (previous) {
     try { await api(`/api/runs/${previous}`, {method: 'DELETE'}); }
     catch (error) { if (error.status !== 404) throw error; }
