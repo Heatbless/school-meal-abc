@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the colony learns · BCA</title>
+<style>
+:root{color-scheme:light;--ink:#28342d;--muted:#646c64;--paper:#f8f6ef;--line:#e1dfd4;--amber:#edb846}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 "Segoe UI",system-ui,sans-serif}
+a{color:#74521a}header{border-bottom:1px solid var(--line);padding:20px max(24px,calc((100vw - 1120px)/2));display:flex;justify-content:space-between;gap:20px;align-items:center}
+.brand{font-weight:750;letter-spacing:.03em;text-decoration:none;color:var(--ink)}nav{display:flex;gap:22px;flex-wrap:wrap}nav a{text-decoration:none;font-size:14px}
+main{max-width:1120px;margin:0 auto;padding:54px 24px 70px}.eyebrow{font-size:12px;font-weight:750;letter-spacing:.16em;text-transform:uppercase;color:#876012}
+h1{font:52px/1.12 Georgia,serif;max-width:760px;margin:16px 0}h2{font:29px/1.2 Georgia,serif;margin:0 0 14px}h3{font-size:17px;margin:20px 0 8px}.intro{max-width:750px;font-size:18px;color:var(--muted)}
+.columns{display:grid;grid-template-columns:240px minmax(0,1fr);gap:44px;margin-top:42px}.contents{align-self:start;position:sticky;top:20px;border-top:1px solid var(--line);padding-top:18px}.contents a{display:block;margin:10px 0;font-size:14px;text-decoration:none}.article section{padding:28px 0;border-top:1px solid var(--line)}.article p{margin:10px 0}
+.role{border-left:3px solid var(--amber);padding:8px 18px;margin:16px 0;background:#fffdf7}.role.onlooker{border-color:#52848e}.role.scout{border-color:#9379ad}
+.formula{padding:16px 20px;border:1px solid var(--line);background:#fffdf7;font:14px/1.8 Consolas,monospace;overflow-x:auto;white-space:pre-wrap;border-radius:8px}
+.note{background:#eee9da;padding:18px 22px;border-radius:10px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}td,th{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#efece2}
+li{margin:8px 0}code{font-size:14px}footer{border-top:1px solid var(--line);padding-top:24px;margin-top:35px;color:var(--muted);font-size:13px}
+@media(max-width:750px){header{padding:18px 20px;align-items:flex-start;flex-direction:column;gap:12px}main{padding:34px 20px}h1{font-size:37px}.columns{grid-template-columns:1fr;gap:16px}.contents{position:static;display:flex;flex-wrap:wrap;gap:12px}.contents a{margin:0}.intro{font-size:16px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="/">BCA / MEAL LAB</a><nav aria-label="Main navigation"><a href="/">Colony laboratory</a><a href="/static/planner.html">School &amp; catalog</a><a href="/static/guide.html" aria-current="page">How it works</a></nav></header>
+<main>
+<div class="eyebrow">A small change. A better school week.</div>
+<h1>How the colony learns</h1>
+<p class="intro">Follow a real Artificial Bee Colony search as it assembles five school lunches. Every food source is a complete week; every local move changes one meal component.</p>
+<div class="columns">
+<nav class="contents" aria-label="Guide contents"><a href="#problem">The meal problem</a><a href="#roles">Meet the bees</a><a href="#scoring">Read the score</a><a href="#selection">Why this source?</a><a href="#memory">Memory &amp; stopping</a><a href="#animation">Read the animation</a><a href="#data">Data &amp; references</a></nav>
+<div class="article">
+<section id="problem"><h2>A week is one solution</h2><p>Monday through Friday each need a staple, protein dish, vegetable dish and fruit. That gives a food source <strong>20 categorical choices</strong>. Daily serving counts are fixed planning inputs.</p><p>The Python host evaluates nutrition for one serving, then calculates school-wide cost and ingredient quantities using the required serving count. It estimates preparation in batches.</p><div class="note">The colony diagram is schematic. Source positions help you follow bees; the optimization variables are the menu choices.</div></section>
+<section id="roles"><h2>Three roles, one shared search</h2>
+<div class="role"><h3>Employed bees · improve a source</h3><p>Each employed bee owns one candidate week. It uses a distinct partner source to propose a one-component substitution. When source and partner offer the same choices, an alternative eligible component can introduce a new choice. The better schedule survives.</p></div>
+<div class="role onlooker"><h3>Onlooker bees · follow promising sources</h3><p>Onlookers choose a source using fitness-weighted probabilities, then try another local substitution. A more attractive source gets a greater chance of selection, but every source retains a chance.</p></div>
+<div class="role scout"><h3>Scout bees · explore a fresh week</h3><p>After enough consecutive failed improvement attempts, a source becomes eligible for abandonment. Its employed bee takes the scout role and samples a replacement week from the eligible catalog.</p></div>
+<p>A cycle follows employed, onlooker and scout phases. This is a <strong>discrete ABC adaptation</strong>: component substitutions express a local neighborhood for categorical meals.</p>
+</section>
+<section id="scoring"><h2>A lower score is better</h2>
+<p>Each score is a weighted sum of normalized terms. Normalization makes different units comparable. Open the score breakdown to see what contributed.</p>
+<div class="formula">S = w_cost × cost + w_budget × budget
+  + w_nutrition × nutrition + w_variety × variety
+  + w_workload × workload</div>
+<div class="table-wrap"><table><thead><tr><th>Term</th><th>How it is measured</th></tr></thead><tbody>
+<tr><td>Cost</td><td>Five-day cost divided by the five-day budget.</td></tr>
+<tr><td>Budget</td><td>Average daily cost overrun divided by each day's budget. Days within budget contribute zero.</td></tr>
+<tr><td>Nutrition</td><td>Average daily sum of normalized energy-range, protein-minimum and fiber-minimum violations.</td></tr>
+<tr><td>Variety</td><td>Protein uses and identical-menu uses beyond their configured repetition limits, divided by five.</td></tr>
+<tr><td>Workload</td><td>Average daily person-minute overrun divided by kitchen capacity.</td></tr>
+</tbody></table></div>
+<h3>Nutrition is measured per serving</h3>
+<div class="formula">energy deviation = max(0, (minimum − energy) / minimum)
+                 + max(0, (energy − maximum) / maximum)
+protein deviation = max(0, (protein minimum − protein) / protein minimum)
+fiber deviation   = max(0, (fiber minimum − fiber) / fiber minimum)</div>
+<h3>School quantities are measured separately</h3>
+<div class="formula">daily cost = cost per serving × required servings
+ingredient quantity = amount per serving × required servings
+batches = ceiling(required servings / component batch size)
+daily workload = sum(batches × person-minutes per batch)</div>
+<p>Ingredient totals retain their units. A gram quantity and a piece count remain separate entries. Dietary exclusions remove incompatible choices before the search; budget, nutrition, variety and capacity preferences create visible target violations.</p>
+</section>
+<section id="selection"><h2>Why did an onlooker choose that source?</h2>
+<div class="formula">fitness(i) = 1 / (1 + score(i))
+probability(i) = fitness(i) / sum(fitness of all sources)</div>
+<p>The event inspector shows probabilities used for the actual draw. Following an accepted move, the current population's probabilities may change.</p><p>A substitution is accepted only when its score strictly improves. Equal or worse scores count as unsuccessful attempts. A successful attempt resets that source's failure counter.</p>
+</section>
+<section id="memory"><h2>Keep the best, even when sources change</h2><p>Best-ever memory is separate from the current food sources. A scout replacement cannot erase an earlier best result. The convergence chart follows this retained best score.</p><p>The run stops at its cycle limit, at the optional number of cycles without a best improvement, or when you choose Stop. Completion gives the stopping reason.</p><p>Use the same catalog, settings and seed to repeat a run. Exports keep these inputs alongside the result. The app reports the best observed solution and its remaining violations.</p></section>
+<section id="animation"><h2>Read an event, then advance</h2><ol><li><strong>Initialize</strong> creates valid candidate schedules on the host.</li><li><strong>Step</strong> advances one host-generated event.</li><li><strong>Play</strong> repeatedly requests advancement. Faster playback can process event batches.</li><li><strong>Pause</strong> stops further advancement requests; an in-flight request can finish.</li><li><strong>Select a source</strong> to inspect its current schedule, score and failure count.</li><li><strong>Reset</strong> starts again from the saved configuration and seed.</li></ol><p>The browser sends controls and renders results. All search, selection, scoring and random generation execute on the Python host.</p></section>
+<section id="data"><h2>Demonstration data you can change</h2><p>The school-menu example is inspired by MBG, Indonesia's <em>Makan Bergizi Gratis</em> program. The catalog's prices, ingredient amounts, nutrition values and target defaults are demonstration inputs. Edit them in the planner or import a configuration JSON file.</p><ul><li><a href="https://abc.erciyes.edu.tr/pub/tr06_2005.pdf">D. Karaboga's original ABC technical report</a></li><li><a href="https://www.bgn.go.id/news/artikel/bgn-akan-memulai-program-mbg-secara-bertahap">BGN: introducing MBG and its recipients</a></li><li><a href="https://www.bgn.go.id/news/berita/dapur-gizi-modular-siap-jangkau-wilayah-3t-bgn-pastikan-anak-3t-tak-tertinggal-gizi">BGN: complete-menu context</a></li></ul></section>
+</div></div><footer>BCA / Five days · school quantities · real colony events</footer>
+</main></body></html>
