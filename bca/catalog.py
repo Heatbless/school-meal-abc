@@ -85,6 +85,43 @@ def default_configuration():
         max_menu_repeats=1,
         exclusions=[],
     )
+    # Deliberate teaching tradeoffs: these illustrative choices make nutrition,
+    # budget and workload penalties observable with the unchanged defaults.
+    for key, label, cost, energy, protein, batch_size, work, grams in [
+        ("protein-light-demo", "Lauk porsi ringan (demo)", 600, 40, 2, 100, 5, 20),
+        (
+            "protein-feast-demo",
+            "Lauk premium banyak proses (demo)",
+            12000,
+            240,
+            30,
+            25,
+            40,
+            140,
+        ),
+    ]:
+        catalog.append(
+            {
+                "id": key,
+                "name": label,
+                "category": "protein",
+                "cost": cost,
+                "energy": energy,
+                "protein": protein,
+                "fiber": 0,
+                "tags": ["demonstration"],
+                "batch_size": batch_size,
+                "work_minutes": work,
+                "ingredients": [
+                    {
+                        "id": key + "-raw",
+                        "name": label + " (bahan)",
+                        "quantity": grams,
+                        "unit": "g",
+                    }
+                ],
+            }
+        )
     return deepcopy(
         {
             "catalog": catalog,

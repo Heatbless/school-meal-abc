@@ -31,6 +31,7 @@ def main():
         page.goto(args.url + "/static/planner.html")
         page.locator("#evaluate-preview").wait_for(state="visible")
         page.wait_for_function("!document.querySelector('#evaluate-preview').disabled")
+        initial_catalog_size = page.locator("#catalog-list .catalog-card").count()
         page.locator("#servings-0").fill("501")
         page.locator(".catalog-card").first.locator("summary").click()
         page.locator("#component-0-cost").fill("2000")
@@ -92,10 +93,17 @@ def main():
         )
         assert page.locator("#servings-0").input_value() == "501"
         page.locator("#add-component").click()
-        assert page.locator("#catalog-list .catalog-card").count() == 20
-        page.locator("#delete-component-19").click()
-        assert page.locator("#catalog-list .catalog-card").count() == 19
-        for index in range(4, 9):
+        assert (
+            page.locator("#catalog-list .catalog-card").count()
+            == initial_catalog_size + 1
+        )
+        page.locator(f"#delete-component-{initial_catalog_size}").click()
+        assert (
+            page.locator("#catalog-list .catalog-card").count() == initial_catalog_size
+        )
+        for index in range(initial_catalog_size):
+            if page.locator(f"#component-{index}-category").input_value() != "protein":
+                continue
             card = page.locator(".catalog-card").nth(index)
             card.locator("summary").click()
             page.locator(f"#component-{index}-tags").fill("blocked")

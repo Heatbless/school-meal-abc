@@ -215,3 +215,58 @@ def test_nutrition_measures_excess_energy_and_independent_shortfalls_per_serving
     result = MealProblem(catalog, planning).evaluate(schedule)
     assert result["metrics"]["nutrition"] == pytest.approx(1.25)
     assert len(result["days"][0]["violations"]) == 3
+
+
+def test_demonstration_catalog_exposes_tradeoffs_and_keeps_a_feasible_week():
+    from bca.catalog import default_configuration
+
+    config = default_configuration()
+    problem = MealProblem(config["catalog"], config["planning"])
+    feasible = [
+        "rice",
+        "chicken",
+        "spinach",
+        "papaya",
+        "brown-rice",
+        "egg",
+        "carrot",
+        "banana",
+        "corn",
+        "tempeh",
+        "cabbage",
+        "orange",
+        "potato",
+        "tofu",
+        "long-beans",
+        "watermelon",
+        "rice",
+        "fish",
+        "mixed-vegetables",
+        "guava",
+    ]
+    result = problem.evaluate(feasible)
+    assert result["targets_met"] is True
+    assert result["totals"]["cost"] == 18950000
+    assert result["totals"]["workload"] == 1500
+    candidate = feasible.copy()
+    candidate[1] = "protein-light-demo"
+    candidate[5] = "protein-feast-demo"
+    result = problem.evaluate(candidate)
+    # Monday: 260+40+70+90 kcal; 5+2+3+1 g protein. Tuesday's
+    # Rp2200+12000+1300+1500 menu has 20 protein batches at 40 min.
+    assert result["days"][0]["nutrition"] == {"energy": 460, "protein": 11, "fiber": 8}
+    assert result["days"][0]["cost"] == 2400000
+    assert result["days"][1]["cost"] == 8500000
+    assert result["days"][1]["workload"] == 975
+    assert result["metrics"] == pytest.approx(
+        {
+            "cost": 0.874,
+            "budget": 0.14,
+            "nutrition": 0.106,
+            "variety": 0,
+            "workload": 0.125,
+        }
+    )
+    assert result["score"] == pytest.approx(2.797)
+    assert result["targets_met"] is False
+    assert len(result["violations"]) == 4

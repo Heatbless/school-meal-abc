@@ -1,4 +1,6 @@
 // Host events are the only source of search decisions. This module renders them.
+import {api, loadConfiguration, configurationNotice} from './configuration.js';
+import {renderResults} from './results.js';
 const $ = id => document.getElementById(id);
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const categories = ['staple', 'protein', 'vegetable', 'fruit'];
@@ -23,33 +25,25 @@ let lastEvent, timer, operation = Promise.resolve(), eventLog = [], animatedSequ
 const component = id => configuration?.catalog.find(item => item.id === id);
 const componentName = id => component(id)?.name ?? id ?? 'No substitution available';
 
-async function api(path, options = {}) {
-  const response = await fetch(path, {headers: {'Content-Type': 'application/json'}, ...options});
-  if (response.status === 204) return null;
-  const data = await response.json();
-  if (!response.ok) {
-    const detail = typeof data.detail === 'string' ? data.detail : (data.detail ?? []).map(item => `${item.loc?.join('.')}: ${item.msg}`).join('; ');
-    const error = new Error(detail || `Host request failed (${response.status})`);
-    error.status = response.status;
-    throw error;
-  }
-  return data;
-}
 function notice(id, text) { $(id).textContent = text; $(id).hidden = !text; }
 function fail(error) { pause(); notice('error-message', error.message); }
 
-async function loadConfiguration() {
-  const defaults = await api('/api/bootstrap');
-  try {
-    const stored = localStorage.getItem('bca.configuration.v1');
-    if (!stored) return defaults;
-    const parsed = JSON.parse(stored);
-    if (!Array.isArray(parsed.catalog) || !parsed.planning || !parsed.algorithm) throw new Error('Incomplete saved configuration');
-    return parsed;
-  } catch {
-    notice('info-message', 'Saved settings could not be read. Demonstration settings are loaded; review Catalog & settings before starting.');
-    return defaults;
+function rememberRun(id) {
+  try { id ? sessionStorage.setItem('bca.tab.run', id) : sessionStorage.removeItem('bca.tab.run'); }
+  catch { /* Reset still cleans the current run if browser storage is unavailable. */ }
+}
+async function retirePreviousRun() {
+  let previous;
+  try { previous = sessionStorage.getItem('bca.tab.run'); } catch { return; }
+  if (previous) {
+    try { await api(`/api/runs/${previous}`, {method: 'DELETE'}); }
+    catch (error) { if (error.status !== 404) throw error; }
+    rememberRun(null);
   }
+}
+async function reloadConfiguration() {
+  configuration = await loadConfiguration();
+  notice('info-message', configurationNotice());
 }
 function summarizeConfiguration() {
   const p = configuration.planning, a = configuration.algorithm;
@@ -69,6 +63,7 @@ async function ensureRun() {
   const {catalog, planning, algorithm} = configuration;
   const result = await api('/api/runs', {method: 'POST', body: JSON.stringify({catalog, planning, algorithm})});
   runId = result.id; state = result.state;
+  rememberRun(runId);
 }
 async function advance() {
   if (busy) return;
@@ -229,17 +224,7 @@ function renderBest() {
   if (!best) { target.replaceChildren(el('p', 'Your best weekly menu, target status, and school totals will appear here as the search runs.', 'muted')); $('target-status').textContent = 'Awaiting search'; return; }
   const evaluation = best.evaluation;
   $('target-status').textContent = evaluation.targets_met ? 'All configured targets met' : `${evaluation.violations.length} target violations`;
-  const summary = el('div', undefined, 'result-summary');
-  for (const [label, value] of [['School cost', money(evaluation.totals.cost)], ['Weekly budget', money(evaluation.totals.budget)], ['Lunch servings', evaluation.totals.servings.toLocaleString()], ['Best score', score(evaluation.score)]]) {
-    const metric = el('div', label); metric.append(el('strong', value)); summary.append(metric);
-  }
-  target.replaceChildren(summary, menuWeek(best.schedule, evaluation));
-  if (evaluation.violations.length) {
-    const box = el('div', undefined, 'violations'), list = el('ul');
-    box.append(el('strong', 'Remaining targets to review'));
-    for (const violation of evaluation.violations) list.append(el('li', violation));
-    box.append(list); target.append(box);
-  }
+  renderResults(target, best, configuration);
 }
 function render() {
   $('best-score').textContent = state?.best ? score(state.best.evaluation.score) : '—';
@@ -272,12 +257,13 @@ $('reset-button').addEventListener('click', async () => {
       catch (error) { if (error.status !== 404) throw error; }
     }
     runId = null; state = null; lastEvent = null; eventLog = []; selected = 0; animatedSequence = null;
-    configuration = await loadConfiguration(); summarizeConfiguration();
+    rememberRun(null);
+    await reloadConfiguration(); summarizeConfiguration();
     $('event-callout').replaceChildren(el('strong', 'A food source is a whole school week.'), el('p', 'Press Step to initialize the population with your current settings.'));
     notice('error-message', ''); render();
   } catch (error) { fail(error); } finally { busy = false; controls(); }
 });
-try { configuration = await loadConfiguration(); summarizeConfiguration(); render(); }
+try { await retirePreviousRun(); await reloadConfiguration(); summarizeConfiguration(); render(); }
 catch (error) { fail(error); }
 // Keep controls accurately disabled during startup and when the host is unavailable.
 controls();

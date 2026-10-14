@@ -12,12 +12,15 @@ export async function api(path, options = {}) {
   } catch {
     throw new Error("Cannot reach the Python host. Check that it is running and your device is connected.");
   }
+  if (response.status === 204) return null;
   let payload;
   try { payload = await response.json(); } catch { throw new Error(`The Python host returned an unreadable response (${response.status}).`); }
   if (!response.ok) {
     const detail = payload.detail;
     const message = Array.isArray(detail) ? detail.map(item => `${(item.loc || []).filter(key => key !== "body").join(" → ")}: ${item.msg}`).join("\n") : typeof detail === "string" ? detail : `Host request failed (${response.status}).`;
-    throw new Error(message);
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
   }
   return payload;
 }

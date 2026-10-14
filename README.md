@@ -28,7 +28,7 @@ On another device, open `http://<HOST-IP>:8000`, using the host computer's LAN a
 1. Open the planner to review the component catalog and school settings.
 2. Set daily serving counts, budget, nutrition profile, dietary exclusions, kitchen capacity, variety limits, and scoring weights.
 3. Save the configuration and return to the colony laboratory.
-4. Initialize a run, then play or advance one event at a time. Adjust playback speed, pause to inspect a source, or stop the run.
+4. Press Step to initialize a run, then play or advance one event at a time. Adjust playback speed, pause to inspect a source, or stop the run.
 5. Review the best schedule and its target status. Export the result and purchasing summary, or save catalog/settings as JSON for a repeatable run.
 
 A menu contains a staple, protein dish, vegetable dish, and fruit. The optimizer changes categorical meal choices. Source positions in the animation are a schematic display of the colony.
@@ -47,13 +47,17 @@ A menu contains a staple, protein dish, vegetable dish, and fruit. The optimizer
 
 The supplied prices, nutrition values and defaults are **demonstration data**, editable in the planner. They are not official MBG standards. Finding the best observed schedule does not imply that all targets have been satisfied or that the global optimum has been proved.
 
+Two additional protein choices marked `demo` make the scoring tradeoffs visible: a cheap light portion can miss nutrition targets, while a premium dish can exceed both the budget and kitchen capacity. The original menu choices can still form a week that meets the demonstration targets.
+
+Settings are saved in this browser's local storage. A run keeps its own catalog and settings snapshot; edits in another page affect the next run. Reset deletes this tab's run and loads the saved settings. Reloading or returning to the laboratory also retires this tab's previous run and prepares a new run. The host keeps up to 32 runs and expires runs after one hour without requests.
+
 ## Algorithm and modularity
 
 The app uses a documented **discrete ABC adaptation**. Local candidates substitute menu components; onlookers use normalized fitness probabilities; scouts replace abandoned sources. The abandonment limit counts consecutive failed improvement attempts, and the best-ever schedule survives source replacement.
 
 The optimizer, meal evaluation, catalog/configuration models, host controls and browser visualization are separated. Runs snapshot their configuration. Browser playback timing does not change the host's seeded search decisions.
 
-See [the algorithm guide](docs/algorithm.md) for score formulas, phases, fitness, animation semantics and references. The confirmed [design brief](.scratch/mbg-school-meals/design.md), [specification](.scratch/mbg-school-meals/spec.md), and [interface contract](.scratch/mbg-school-meals/contract.md) document the build.
+See [the algorithm guide](docs/algorithm.md) for score formulas, phases, fitness, animation semantics and references, and [the architecture](docs/architecture.md) for module boundaries. The confirmed [design brief](.scratch/mbg-school-meals/design.md), [specification](.scratch/mbg-school-meals/spec.md), and [interface contract](.scratch/mbg-school-meals/contract.md) document the build.
 
 ## Checks
 
@@ -66,6 +70,7 @@ The automated checks cover public meal evaluation, independent quantity/scoring 
 
 ```powershell
 uv run --with playwright python tests/browser_smoke.py
+uv run --with playwright python tests/browser_planner.py --url http://127.0.0.1:8000
 ```
 
-Start the app before the browser check. Its screenshots and check output are generated locally.
+Start the app before the browser checks. Pass `--url http://127.0.0.1:<PORT>` to use a different host port, or `--browser <PATH>` to use a different installed Chrome executable. The smoke check writes screenshots and downloaded examples to `.scratch/mbg-school-meals/qa/`; use `--output <PATH>` to change that location. It covers live controls, all bee roles, host pause, configuration snapshots, reproducibility, tab cleanup, exports and 390/360px layouts. The planner check covers catalog and ingredient editing, imports and input validation.

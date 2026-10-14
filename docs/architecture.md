@@ -38,6 +38,8 @@ Ingredient aggregation keeps each identifier/unit pair separate. Configured diet
 
 The colony laboratory, school/catalog editor and teaching guide use local assets. Configuration is remembered per browser and can be transferred through JSON. Each created run keeps a snapshot of its inputs, so later catalog edits do not change that run.
 
+The lab records its active host run in session storage. Reset deletes it; a lab page reload or return from the editor deletes the previous run before loading saved configuration. There is no background optimizer thread: host state changes only through advance or stop requests. The in-memory registry is limited to 32 runs and expires entries after one hour without requests.
+
 Results can be exported using the host's evaluated data. JSON retains reproducibility inputs; CSV exposes menus and purchasing quantities. The browser formats and downloads these results.
 
 ## uv and Python
